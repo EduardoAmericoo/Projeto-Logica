@@ -1,0 +1,23 @@
+{% extends 'home.html' %} {% block content %}
+<div class="container">
+  <h2 class="mt-4">Leaderboard</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Posição</th>
+        <th scope="col">Nome do Jogador</th>
+        <th scope="col">Pontuação</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for jogador in jogadores %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ jogador.nome }}</td>
+        <td>{{ jogador.pontuacao }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
