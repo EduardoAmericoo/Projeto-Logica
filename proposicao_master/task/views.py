@@ -7,8 +7,10 @@ from .forms import JogadorForm
 def jogo_view(request):
     return render(request, 'home.html')
 
-# Exibir a leaderboard
+def game_view(request):
+    return render(request, 'game.html')
 
+# Exibir a leaderboard
 
 def leaderboard_view(request):
     jogadores = Jogador.objects.order_by('-pontuacao')[:10]
