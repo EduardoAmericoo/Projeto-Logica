@@ -63,6 +63,19 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
+    /* Destaque para proposições P, Q e R */
+    .prop {
+      display: inline-block;
+      width: 25px;
+      height: 35px;
+      background-color: #4a4a4a;
+      color: #ffffff;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 25%;
+      margin: 0 5px;
+    }
+
     /* Contêiner de opções Verdadeiro/Falso */
     .opcoes-container {
       display: flex;
@@ -157,8 +170,15 @@
 </div>
 
 <div class="content">
+  <!-- Exibir a fase atual -->
+  <div class="fase-info">
+    <h3>Fase {{ fase_atual }} de 5</h3>
+  </div>
+
   <!-- Proposição lógica -->
-  <div class="proposicao">~p ∧ q ∧ ~r</div>
+  <div class="proposicao">
+    {{ proposicao }}
+  </div>
 
   <!-- Contêiner de opções Verdadeiro/Falso -->
   <form method="POST" action="{% url 'game' %}">
