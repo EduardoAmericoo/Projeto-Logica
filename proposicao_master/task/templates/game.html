@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game</title>
+  <title>Proposição Master - Jogo</title>
   <style>
     /* Reset básico */
     * {
@@ -12,7 +12,7 @@
       box-sizing: border-box;
     }
 
-    /* Estilização do corpo da página para layout flex */
+    /* Estilização do corpo da página */
     body {
       display: flex;
       flex-direction: column;
@@ -22,7 +22,7 @@
       color: #333;
     }
 
-    /* Estilização da navbar */
+    /* Navbar */
     .navbar {
       width: 100%;
       background-color: #4a4a4a;
@@ -33,7 +33,6 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    /* Estilização do título na navbar */
     .navbar h1 {
       color: #f0f0f0;
       font-size: 28px;
@@ -49,58 +48,99 @@
       justify-content: center;
       flex: 1;
       padding: 20px;
+      text-align: center;
     }
 
-    /* Estilização da proposição */
+    /* Proposição */
     .proposicao {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: bold;
       color: #4a4a4a;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       background-color: #e0e0e0;
-      padding: 10px 20px;
+      padding: 15px 25px;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    /* Estilização das opções de Verdadeiro/Falso */
-    .opcao {
-      display: inline-flex;
-      align-items: center;
-      margin: 10px;
-      background-color: #ffffff;
-      border: 1px solid #cccccc;
-      border-radius: 8px;
-      padding: 10px 15px;
-      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    /* Contêiner de opções Verdadeiro/Falso */
+    .opcoes-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
     }
 
-    /* Texto da variável */
-    .opcao span {
-      font-size: 20px;
-      margin-right: 12px;
-      color: #333;
-      font-weight: 500;
-    }
-
-    /* Botão de alternar */
+    /* Botões de alternância V/F */
     .botao-alternar {
       font-size: 18px;
-      padding: 8px 12px;
+      padding: 10px 20px;
       cursor: pointer;
       color: #ffffff;
       background-color: #4caf50;
       border: none;
       border-radius: 5px;
       transition: background-color 0.3s;
+      width: 60px;
     }
 
-    /* Efeito de hover no botão */
     .botao-alternar:hover {
       background-color: #388e3c;
     }
 
-    /* Estilização do rodapé */
+    /* Botão de verificar */
+    .btn-verificar {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-verificar:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    .btn-verificar:active {
+      transform: scale(0.98);
+    }
+
+    /* Botão e contêiner de dicas */
+    .dica-container {
+      margin-top: 20px;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      padding: 15px;
+      border-radius: 8px;
+      color: #856404;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    .btn-dica {
+      margin-top: 15px;
+      padding: 8px 15px;
+      font-size: 16px;
+      background-color: #ffc107;
+      color: #333;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-dica:hover {
+      background-color: #e0a800;
+    }
+
+    /* Rodapé */
     footer {
       width: 100%;
       background-color: #333;
@@ -109,66 +149,50 @@
       padding: 15px;
       font-size: 14px;
     }
-
-    /* Layout responsivo */
-    @media (max-width: 600px) {
-      .navbar h1 {
-        font-size: 24px;
-      }
-      .proposicao {
-        font-size: 22px;
-      }
-      footer {
-        font-size: 12px;
-      }
-    }
   </style>
 </head>
 <body>
-
-<!-- Navbar com o nome centralizado -->
 <div class="navbar">
   <h1>Proposição Master</h1>
 </div>
 
-<!-- Conteúdo principal -->
 <div class="content">
   <!-- Proposição lógica -->
   <div class="proposicao">~p ∧ q ∧ ~r</div>
 
-  <!-- Opções de Verdadeiro/Falso para cada variável -->
-  <div class="opcao">
-    <span>p:</span>
-    <span id="valor-p">F</span>
-    <button class="botao-alternar" onclick="alternarValor('p')">Alternar</button>
-  </div>
+  <!-- Contêiner de opções Verdadeiro/Falso -->
+  <form method="POST" action="{% url 'game' %}">
+    {% csrf_token %}
+    <div class="opcoes-container">
+      <button type="submit" name="toggle" value="p" class="botao-alternar">{{ valores.p }}</button>
+      <button type="submit" name="toggle" value="q" class="botao-alternar">{{ valores.q }}</button>
+      <button type="submit" name="toggle" value="r" class="botao-alternar">{{ valores.r }}</button>
+    </div>
+    <button type="submit" class="btn-verificar" name="verificar" value="verificar">Verificar</button>
+  </form>
 
-  <div class="opcao">
-    <span>q:</span>
-    <span id="valor-q">F</span>
-    <button class="botao-alternar" onclick="alternarValor('q')">Alternar</button>
-  </div>
+  <!-- Botão e exibição de dicas -->
+  {% if mostrar_dica %}
+    <form method="POST" action="{% url 'game' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn-dica" name="mostrar_dica">Mostrar Dica</button>
+    </form>
+  {% endif %}
 
-  <div class="opcao">
-    <span>r:</span>
-    <span id="valor-r">F</span>
-    <button class="botao-alternar" onclick="alternarValor('r')">Alternar</button>
-  </div>
+  {% if dica_atual %}
+    <div class="dica-container">
+      <p>{{ dica_atual }}</p>
+    </div>
+  {% endif %}
+
+  {% if resultado %}
+    <div class="resultado">{{ resultado }}</div>
+  {% endif %}
 </div>
 
-<script>
-  // Função para alternar entre "F" e "V"
-  function alternarValor(letra) {
-    const elemento = document.getElementById(`valor-${letra}`);
-    elemento.textContent = elemento.textContent === 'F' ? 'V' : 'F';
-  }
-</script>
-
-<!-- Rodapé fixado na parte inferior -->
 <footer>
   <p>&copy; 2024 Proposição Master. Todos os direitos reservados.</p>
   <p>Desenvolvido pelos integrantes da equipe Proposição Master.</p>
 </footer>
-
 </body>
 </html>
