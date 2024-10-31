@@ -25,7 +25,7 @@
         <p>Digite seu nome para começar o jogo:</p>
 
         <!-- Ajuste para redirecionar para a página do jogo -->
-        <form method="get" action="{% url 'game' %}" class="start-game-form">
+        <form method="post" action="{% url 'home' %}" class="start-game-form">
           {% csrf_token %}
           <input
             type="text"
