@@ -16,9 +16,6 @@ proposicoes_fases = [
      "dicas": ["A implicação deve ser verdadeira com r e q como verdadeiros.", "Verifique se p é falso e q é verdadeiro para atender a condição."]}
 ]
 
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Jogador
-from .forms import JogadorForm
 
 def game_view(request):
     # Carregar a fase atual e dados do jogador da sessão
