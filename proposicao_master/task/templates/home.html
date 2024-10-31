@@ -1,4 +1,6 @@
-{% extends 'menu.html' %} {% load static %}{% block content %}
+{% extends 'menu.html' %}
+{% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -21,7 +23,9 @@
       <div class="content-container">
         <h2>Bem-vindo ao Proposição Master!</h2>
         <p>Digite seu nome para começar o jogo:</p>
-        <form method="post" class="start-game-form">
+
+        <!-- Ajuste para redirecionar para a página do jogo -->
+        <form method="get" action="{% url 'game' %}" class="start-game-form">
           {% csrf_token %}
           <input
             type="text"
