@@ -1,41 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar</title>
-    <style>
-        /* Estilização da navbar */
-        .navbar {
-            background-color: #585454;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* Estilização do nome centralizado */
-        .navbar h1 {
-            color: white;
-            margin: 0;
-            font-size: 30px;
-        }
-    </style>
+    /* Estilização do corpo da página para layout flex */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    /* Estilização da navbar */
+    .navbar {
+      width: 100%;
+      background-color: #4a4a4a;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Estilização do título na navbar */
+    .navbar h1 {
+      color: #f0f0f0;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    /* Contêiner do jogo */
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 20px;
+    }
+
+    /* Estilização da proposição */
+    .proposicao {
+      font-size: 26px;
+      font-weight: bold;
+      color: #4a4a4a;
+      margin-bottom: 30px;
+      background-color: #e0e0e0;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilização das opções de Verdadeiro/Falso */
+    .opcao {
+      display: inline-flex;
+      align-items: center;
+      margin: 10px;
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 10px 15px;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Texto da variável */
+    .opcao span {
+      font-size: 20px;
+      margin-right: 12px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Botão de alternar */
+    .botao-alternar {
+      font-size: 18px;
+      padding: 8px 12px;
+      cursor: pointer;
+      color: #ffffff;
+      background-color: #4caf50;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    /* Efeito de hover no botão */
+    .botao-alternar:hover {
+      background-color: #388e3c;
+    }
+
+    /* Estilização do rodapé */
+    footer {
+      width: 100%;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    /* Layout responsivo */
+    @media (max-width: 600px) {
+      .navbar h1 {
+        font-size: 24px;
+      }
+      .proposicao {
+        font-size: 22px;
+      }
+      footer {
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <!-- Navbar com o nome centralizado -->
 <div class="navbar">
-    <h1>Proposição Master</h1>
+  <h1>Proposição Master</h1>
 </div>
 
+<!-- Conteúdo principal -->
+<div class="content">
+  <!-- Proposição lógica -->
+  <div class="proposicao">~p ∧ q ∧ ~r</div>
+
+  <!-- Opções de Verdadeiro/Falso para cada variável -->
+  <div class="opcao">
+    <span>p:</span>
+    <span id="valor-p">F</span>
+    <button class="botao-alternar" onclick="alternarValor('p')">Alternar</button>
+  </div>
+
+  <div class="opcao">
+    <span>q:</span>
+    <span id="valor-q">F</span>
+    <button class="botao-alternar" onclick="alternarValor('q')">Alternar</button>
+  </div>
+
+  <div class="opcao">
+    <span>r:</span>
+    <span id="valor-r">F</span>
+    <button class="botao-alternar" onclick="alternarValor('r')">Alternar</button>
+  </div>
+</div>
+
+<script>
+  // Função para alternar entre "F" e "V"
+  function alternarValor(letra) {
+    const elemento = document.getElementById(`valor-${letra}`);
+    elemento.textContent = elemento.textContent === 'F' ? 'V' : 'F';
+  }
+</script>
+
+<!-- Rodapé fixado na parte inferior -->
+<footer>
+  <p>&copy; 2024 Proposição Master. Todos os direitos reservados.</p>
+  <p>Desenvolvido pelos integrantes da equipe Proposição Master.</p>
+</footer>
+
 </body>
-</html>
-
-
-    <footer class="bg-dark text-white text-center p-3 mt-5">
-      <p>&copy; 2024 Proposição Master. Todos os direitos reservados.</p>
-      <p>Desenvolvido pelos integrantes da equipe Proposição Master.</p>
-    </footer>
-  </body>
 </html>
