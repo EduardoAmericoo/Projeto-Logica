@@ -1,3 +1,7 @@
+{% extends 'menu.html' %}
+{% load static %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,24 +26,6 @@
       color: #333;
     }
 
-    /* Navbar */
-    .navbar {
-      width: 100%;
-      background-color: #4a4a4a;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .navbar h1 {
-      color: #f0f0f0;
-      font-size: 28px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
     /* Contêiner do jogo */
     .content {
       display: flex;
@@ -61,6 +47,15 @@
       padding: 15px 25px;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex; 
+      gap: 2px;
+      align-items: baseline;
+    }
+
+    .proposicao .prop {
+      letter-spacing: -1px; 
+      margin: 0 1px; 
+      vertical-align: middle;
     }
 
     /* Destaque para proposições P, Q e R */
@@ -68,12 +63,17 @@
       display: inline-block;
       width: 25px;
       height: 35px;
-      background-color: #4a4a4a;
+      background-color: #757575;
       color: #ffffff;
       text-align: center;
       line-height: 20px;
-      border-radius: 25%;
+      border-radius: 8px;
       margin: 0 5px;
+    }
+
+    .proposicao span {
+      padding: 5px 2px;
+      border-radius: 5px;
     }
 
     /* Contêiner de opções Verdadeiro/Falso */
@@ -90,15 +90,27 @@
       padding: 10px 20px;
       cursor: pointer;
       color: #ffffff;
-      background-color: #4caf50;
       border: none;
       border-radius: 5px;
       transition: background-color 0.3s;
       width: 60px;
     }
 
-    .botao-alternar:hover {
+    /* Cores específicas para os botões V e F */
+    .botao-verde {
+      background-color: #4caf50; /* Verde para V */
+    }
+
+    .botao-verde:hover {
       background-color: #388e3c;
+    }
+
+    .botao-azul {
+      background-color: #2196f3; /* Azul para F */
+    }
+
+    .botao-azul:hover {
+      background-color: #1976d2;
     }
 
     /* Botão de verificar */
@@ -107,7 +119,7 @@
       padding: 10px 20px;
       font-size: 18px;
       font-weight: bold;
-      background-color: #007bff;
+      background-color: #052c55;
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -116,7 +128,7 @@
     }
 
     .btn-verificar:hover {
-      background-color: #0056b3;
+      background-color: #0f447c;
       transform: scale(1.05);
     }
 
@@ -147,6 +159,9 @@
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .btn-dica:hover {
@@ -162,12 +177,11 @@
       padding: 15px;
       font-size: 14px;
     }
+    
   </style>
 </head>
+
 <body>
-<div class="navbar">
-  <h1>Proposição Master</h1>
-</div>
 
 <div class="content">
   <!-- Exibir a fase atual -->
@@ -177,16 +191,22 @@
 
   <!-- Proposição lógica -->
   <div class="proposicao">
-    {{ proposicao }}
+    {% for char in proposicao %}
+      {% if char == "p" or char == "r" or char == "q" %}
+        <span class="prop">{{ char }}</span>
+      {% else %}
+        <span>{{ char }}</span>
+      {% endif %}
+    {% endfor %}
   </div>
 
   <!-- Contêiner de opções Verdadeiro/Falso -->
   <form method="POST" action="{% url 'game' %}">
     {% csrf_token %}
     <div class="opcoes-container">
-      <button type="submit" name="toggle" value="p" class="botao-alternar">{{ valores.p }}</button>
-      <button type="submit" name="toggle" value="q" class="botao-alternar">{{ valores.q }}</button>
-      <button type="submit" name="toggle" value="r" class="botao-alternar">{{ valores.r }}</button>
+      <button type="submit" name="toggle" value="p" class="botao-alternar {% if valores.p == 'V' %}botao-verde{% else %}botao-azul{% endif %}">{{ valores.p }}</button>
+      <button type="submit" name="toggle" value="q" class="botao-alternar {% if valores.q == 'V' %}botao-verde{% else %}botao-azul{% endif %}">{{ valores.q }}</button>
+      <button type="submit" name="toggle" value="r" class="botao-alternar {% if valores.r == 'V' %}botao-verde{% else %}botao-azul{% endif %}">{{ valores.r }}</button>
     </div>
     <button type="submit" class="btn-verificar" name="verificar" value="verificar">Verificar</button>
   </form>
@@ -195,7 +215,11 @@
   {% if mostrar_dica %}
     <form method="POST" action="{% url 'game' %}">
       {% csrf_token %}
-      <button type="submit" class="btn-dica" name="mostrar_dica">Mostrar Dica</button>
+      <button type="submit" class="btn-dica" name="mostrar_dica">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightbulb-fill" viewBox="0 0 16 16">
+          <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m3 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1-.5-.5"/>
+        </svg>
+      </button>
     </form>
   {% endif %}
 
@@ -210,9 +234,7 @@
   {% endif %}
 </div>
 
-<footer>
-  <p>&copy; 2024 Proposição Master. Todos os direitos reservados.</p>
-  <p>Desenvolvido pelos integrantes da equipe Proposição Master.</p>
-</footer>
 </body>
 </html>
+{% endblock %}
+

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Jogador
 from .forms import JogadorForm
 
+
 # Proposições e respostas corretas para cada fase
 proposicoes_fases = [
     {"proposicao": "p → q ∧ ~r", "resposta_correta": {'p': 'F', 'q': 'V', 'r': 'F'},
@@ -16,38 +17,33 @@ proposicoes_fases = [
      "dicas": ["A implicação deve ser verdadeira com r e q como verdadeiros.", "Verifique se p é falso e q é verdadeiro para atender a condição."]}
 ]
 
-
 def game_view(request):
-    # Carregar a fase atual e dados do jogador da sessão
     fase_atual = request.session.get('fase_atual', 1)
     valores = request.session.get('valores', valores_iniciais.copy())
     verificacoes = request.session.get('verificacoes', 0)
     jogador_id = request.session.get('jogador_id')
     resultado = None
+    dica_atual = None  
 
-    # Verificar se o jogador_id existe e é válido
     if not jogador_id or not Jogador.objects.filter(id=jogador_id).exists():
-        # Redirecionar para a página inicial se o jogador não estiver registrado
         return redirect('home')
 
-    # Obter o jogador com segurança
     jogador = Jogador.objects.get(id=jogador_id)
-
-    # Proposição e controle de dicas da fase atual
     proposicao_atual = proposicoes_fases[fase_atual - 1]
     dicas_vistas = request.session.get('dicas_vistas', 0)
-    dica_atual = proposicao_atual["dicas"][dicas_vistas] if dicas_vistas < len(proposicao_atual["dicas"]) else None
 
     if request.method == 'POST':
         if 'mostrar_dica' in request.POST:
             if dicas_vistas < len(proposicao_atual["dicas"]):
                 dicas_vistas += 1
+                dica_atual = proposicao_atual["dicas"][dicas_vistas - 1]  
         elif 'toggle' in request.POST:
             letra = request.POST['toggle']
             valores[letra] = 'V' if valores[letra] == 'F' else 'F'
         elif 'verificar' in request.POST:
             verificacoes += 1
             if valores == proposicao_atual['resposta_correta']:
+            
                 fase_atual += 1
                 if fase_atual > len(proposicoes_fases):
                     resultado = f"Parabéns! Você completou todas as fases com {verificacoes} tentativas."
@@ -61,7 +57,6 @@ def game_view(request):
                     resultado = f"Fase {fase_atual - 1} concluída! Avançando para a fase {fase_atual}."
                     valores = valores_iniciais.copy()
                     dicas_vistas = 0
-
                 proposicao_atual = proposicoes_fases[fase_atual - 1]
             else:
                 resultado = "Algumas respostas estão incorretas. Tente novamente!"
@@ -79,6 +74,7 @@ def game_view(request):
         'fase_atual': fase_atual,
         'proposicao': proposicao_atual['proposicao']
     })
+
 
 
 valores_iniciais = {'p': 'F', 'q': 'F', 'r': 'F'}
