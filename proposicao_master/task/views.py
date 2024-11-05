@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Jogador
+from .models import Jogador, PlayerScore
 from .forms import JogadorForm
 # Create your views here.
 
@@ -26,3 +26,18 @@ def inicio_jogo_view(request):
         form = JogadorForm()
     jogadores = Jogador.objects.order_by('-pontuacao')[:5]
     return render(request, 'home.html', {'jogadores': jogadores})
+
+def endgame_view(request):
+    # Recuperar o jogador atual (supondo que o nome esteja salvo na sessão)
+    jogador_nome = request.session.get('jogador_nome', 'Jogador Desconhecido')
+    jogador = Jogador.objects.filter(nome=jogador_nome).first()
+
+    # Preparar o contexto com informações do jogador ou valores padrão se o jogador não for encontrado
+    context = {
+        'jogador_nome': jogador.nome if jogador else 'Desconhecido',
+        'pontuacao': jogador.pontuacao if jogador else 0,
+        'tentativas': jogador.tentativas if jogador else 'N/A',
+        'tempo_gasto': jogador.tempo_gasto if jogador else 'N/A'
+    }
+
+    return render(request, 'endgame.html', context)

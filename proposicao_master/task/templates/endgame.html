@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo do Jogo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #333;
+            margin-top: 50px;
+        }
+        .stats {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .stats p {
+            margin: 5px 0;
+        }
+        .buttons {
+            margin-top: 30px;
+        }
+        .buttons a {
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+        .buttons a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fim de Jogo, {{ jogador_nome }}!</h1>
+    <div class="stats">
+        <p>Pontuação: <strong>{{ pontuacao }}</strong></p>
+        <p>Tentativas: <strong>{{ tentativas }}</strong></p>
+        <p>Tempo Gasto: <strong>{{ tempo_gasto }}</strong></p>
+    </div>
+    <div class="buttons">
+        <a href="">Jogar Novamente</a>
+        <a href="{% url 'leaderboard' %}">Ver Leaderboard</a>
+    </div>
+</body>
+</html>

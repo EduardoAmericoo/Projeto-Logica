@@ -22,4 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.inicio_jogo_view, name='home'),
     path('leaderboard/', views.leaderboard_view, name='leaderboard'),
+    path('endgame/', views.endgame_view, name='endgame'),
 ]
+
