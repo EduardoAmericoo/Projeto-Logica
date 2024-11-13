@@ -22,10 +22,11 @@
     <div class="game-container">
       <div class="content-container">
         <h2>Bem-vindo ao Proposição Master!</h2>
+
         <p>Digite seu nome para começar o jogo:</p>
 
         <!-- Ajuste para redirecionar para a página do jogo -->
-        <form method="post" action="{% url 'home' %}" class="start-game-form">
+        <form method="get" action="{% url 'game' %}" class="start-game-form">
           {% csrf_token %}
           <input
             type="text"
@@ -50,12 +51,6 @@
           {% endfor %}
         </ul>
       </div>
-      <div class="help-button">
-        <button id="help" class="btn btn-secondary">?</button>
-        <div id="help-text" class="help-text d-none">
-          <p>Aqui estão as regras do jogo...</p>
-        </div>
-      </div>
     </div>
     <script>
       document.getElementById("help").addEventListener("click", function () {
@@ -66,6 +61,7 @@
   </body>
 </html>
 <style>
+  
   .game-container {
     position: relative;
     width: 100%;
@@ -80,7 +76,6 @@
 
   .content-container {
     text-align: center;
-    font-family: Arial, sans-serif;
     margin-bottom: 20px;
   }
 
@@ -92,6 +87,7 @@
   }
 
   .input-name {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 100%;
     max-width: 250px;
     padding: 12px;
@@ -108,6 +104,7 @@
   }
 
   .btn-start-game {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #4a90e2, #007bff);
     color: white;
     border: none;
@@ -131,6 +128,7 @@
   }
 
   .leaderboard-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: absolute;
     top: 20px;
     right: 20px;

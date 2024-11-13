@@ -15,6 +15,16 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'styles.css' %}" />
     <style>
+      body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+
+    }
+
       /* Sidebar */
       .sidebar {
         height: 100%;
@@ -59,6 +69,8 @@
         font-size: 28px;
         font-weight: bold;
         letter-spacing: 1px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
       }
 
       /* Icones da navbar */
@@ -133,11 +145,107 @@
          fill: #ffffff;
        }
 
+      
+/* Estilo do Título */
+.sidebar-content h2 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ffc107; /* Amarelo ouro */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra no texto */
+}
+
+/* Estilo do Parágrafo */
+.sidebar-content p {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  text-align: justify;
+  color: #f1f1f1;
+  margin-bottom: 20px;
+}
+
+/* Lista de Regras */
+.sidebar-content ul {
+  margin: 20px 0;
+  padding-left: 25px;
+  list-style: none;
+}
+
+.sidebar-content ul li {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #f1f1f1;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-content ul li::before {
+  content: "✓"; /* Ícone antes de cada item */
+  margin-right: 10px;
+  color: #28a745; /* Verde claro */
+  font-weight: bold;
+}
+
+/* Botão Fechar */
+.sidebar .closebtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 36px;
+  color: #ffc107; /* Amarelo ouro */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.sidebar .closebtn:hover {
+  color: #ff5733; /* Laranja escuro */
+}
+
+/* Configuração inicial da barra lateral */
+.sidebar {
+  height: 100%;
+  width: 0; /* Começa fechada */
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #343a40; /* Fundo cinza escuro */
+  overflow-x: hidden;
+  transition: 0.5s; /* Animação suave */
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2); /* Sombra */
+  padding: 0; /* Sem padding enquanto está fechada */
+  z-index: 1000;
+}
+
+/* Quando a barra lateral está aberta */
+.sidebar.open {
+  width: 300px; /* Largura fixa ao abrir */
+  padding: 20px; /* Adiciona padding ao abrir */
+}
+
+/* Botão Fechar */
+.sidebar .closebtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 36px;
+  color: #ffc107; /* Amarelo ouro */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.sidebar .closebtn:hover {
+  color: #ff5733; /* Laranja escuro */
+}
+
     </style>
   </head>
   <body>
     <div class="navbar">
-      <h1>Proposição Master</h1>
+      <h1><a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">Proposição Master</a></h1>
       <div class="menu-icon" onclick="toggleMenu()">
           <div class="bar"></div>
           <div class="bar"></div>
@@ -157,17 +265,32 @@
           
       </nav>
   </div>
+  <div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
+    <div class="sidebar-content">
+      <h2>Ajuda</h2>
+      <p>Regras do Jogo Proposição Master</p>
+      <ul>
+        <li>O objetivo do jogo é resolver desafios de lógica proposicional.</li>
+        <li>Cada fase apresenta uma proposição lógica que você deve corrigir ou organizar para que o resultado seja verdadeiro.</li>
+        <li>Use os botões para trocar os valores das proposições (V ou F) ou para alterar a estrutura lógica.</li>
+        <li>Complete as 5 fases, com a dificuldade aumentando a cada nível.</li>
+        <li>Menos alterações feitas significam uma pontuação melhor no final.</li>
+        <li>Acompanhe seu progresso no leaderboard, competindo com outros jogadores!</li>
+        <li>Boa sorte e divirta-se aprendendo lógica! 🎮</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Botão para abrir o sidebar -->
+
+  
+  
+
 
     {% block content %} {% endblock %}
 
     <!-- Sidebar HTML -->
-    <div id="mySidebar" class="sidebar">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
-      <div class="sidebar-content">
-        <h2>Ajuda</h2>
-        <p></p>
-      </div>
-    </div>
 
     <footer class="bg-dark text-white text-center p-3 mt-5">
       <p>&copy; 2024 Proposição Master. Todos os direitos reservados.</p>
@@ -175,20 +298,15 @@
     </footer>
 
     <script>
-      /* Funções para abrir e fechar a sidebar */
-      function openSidebar() {
-        document.getElementById("mySidebar").style.width = "250px";
-      }
+   function openSidebar() {
+  const sidebar = document.getElementById("mySidebar");
+  sidebar.classList.add("open"); // Adiciona a classe para abrir
+}
 
-      function closeSidebar() {
-        document.getElementById("mySidebar").style.width = "0";
-      }
-
-      /* Função para abrir/fechar o menu no mobile */
-      function toggleMenu() {
-        const menu = document.getElementById('navbar-menu');
-        menu.classList.toggle('active');
-      }
+function closeSidebar() {
+  const sidebar = document.getElementById("mySidebar");
+  sidebar.classList.remove("open"); // Remove a classe para fechar
+}
     </script>
   </body>
 </html>

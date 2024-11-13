@@ -5,17 +5,41 @@ from .forms import JogadorForm
 
 # Proposições e respostas corretas para cada fase
 proposicoes_fases = [
-    {"proposicao": "p → q ∧ ~r", "resposta_correta": {'p': 'F', 'q': 'V', 'r': 'F'},
-     "dicas": ["Lembre-se: a proposição implica que p deve ser falso se q é verdadeiro.", "Tente ajustar r para falso também."]},
-    {"proposicao": "(p ∧ q) → ~r", "resposta_correta": {'p': 'V', 'q': 'V', 'r': 'F'},
-     "dicas": ["A implicação é verdadeira se r é falso quando p e q são verdadeiros.", "Tente ajustar p e q para verdadeiros."]},
-    {"proposicao": "~p ∨ (q ↔ r)", "resposta_correta": {'p': 'F', 'q': 'V', 'r': 'V'},
-     "dicas": ["Lembre-se que ~p significa que p é falso.", "Verifique a equivalência entre q e r."]},
-    {"proposicao": "(p ↔ q) ∧ (q → ~r)", "resposta_correta": {'p': 'V', 'q': 'V', 'r': 'F'},
-     "dicas": ["A equivalência entre p e q deve ser verdadeira.", "Lembre-se: se q é verdadeiro, então r precisa ser falso."]},
-    {"proposicao": "(p ∨ ~q) → (r ∧ q)", "resposta_correta": {'p': 'F', 'q': 'V', 'r': 'V'},
-     "dicas": ["A implicação deve ser verdadeira com r e q como verdadeiros.", "Verifique se p é falso e q é verdadeiro para atender a condição."]}
+    {"proposicao": "p ∧ ~q ∧ r",
+     "resposta_correta": [{'p': 'V', 'q': 'F', 'r': 'V'}],
+     "dicas": [
+         "A negação de q torna esse valor importante para satisfazer a proposição.",
+         "Analise o impacto de r ser verdadeiro no resultado geral."
+     ]},
+    {"proposicao": "(p ∨ q) ∧ ~r",
+     "resposta_correta": [{'p': 'V', 'q': 'V', 'r': 'F'}, {'p': 'F', 'q': 'V', 'r': 'F'}, {'p': 'V', 'q': 'F', 'r': 'F'}],
+     "dicas": [
+         "A disjunção permite que pelo menos um dos valores de p ou q seja verdadeiro.",
+         "Considere como o valor de r pode invalidar a proposição."
+     ]},
+    {"proposicao": "(~p → q) ∧ (r → ~q)",
+     "resposta_correta": [{'p': 'V', 'q': 'V', 'r': 'F'},{'p': 'F', 'q': 'V', 'r': 'F'}],
+     "dicas": [
+         "Explore como a implicação (~p → q) se comporta quando q é falso.",
+         "Pense sobre como a relação entre r e q afeta a segunda parte."
+     ]},
+    {"proposicao": "(~p ∨ q) ↔ (~r ∧ p)",
+     "resposta_correta": [{'p': 'V', 'q': 'F', 'r': 'V'},{ 'p': 'V', 'q': 'V', 'r': 'F'}, {'p':'V', 'q': 'F', 'r':'V'}],
+     "dicas": [
+         "A equivalência exige que ambos os lados compartilhem o mesmo valor lógico.",
+         "Reflita sobre como a negação de p no lado esquerdo interage com q.",
+         "Lembre-se de que o lado direito depende fortemente de p ser verdadeiro."
+     ]},
+    {"proposicao": "[(~p ∨ q) ∧ (p → r)] → [(~q ∨ ~r) ∧ (~p ↔ ~q)]",
+     "resposta_correta": [{'p': 'V', 'q': 'V', 'r': 'F'},{'p': 'V', 'q': 'F', 'r': 'V'},{'p': 'V', 'q': 'F', 'r': 'F'},{'p': 'F', 'q': 'V', 'r': 'F'}],
+     "dicas": [
+         "A condição inicial combina disjunção e implicação; estude como isso restringe os valores de p, q e r.",
+         "Observe como o lado direito da implicação depende de ~q e ~p para satisfazer as condições.",
+         "A análise dos operadores ↔ e ∧ é fundamental para fechar as lacunas entre o antecedente e o consequente."
+     ]}
 ]
+
+
 
 def game_view(request):
     fase_atual = request.session.get('fase_atual', 1)
@@ -23,7 +47,7 @@ def game_view(request):
     verificacoes = request.session.get('verificacoes', 0)
     jogador_id = request.session.get('jogador_id')
     resultado = None
-    dica_atual = None  
+    dica_atual = None
 
     if not jogador_id or not Jogador.objects.filter(id=jogador_id).exists():
         return redirect('home')
@@ -36,17 +60,23 @@ def game_view(request):
         if 'mostrar_dica' in request.POST:
             if dicas_vistas < len(proposicao_atual["dicas"]):
                 dicas_vistas += 1
-                dica_atual = proposicao_atual["dicas"][dicas_vistas - 1]  
+                dica_atual = proposicao_atual["dicas"][dicas_vistas - 1]
         elif 'toggle' in request.POST:
             letra = request.POST['toggle']
             valores[letra] = 'V' if valores[letra] == 'F' else 'F'
         elif 'verificar' in request.POST:
             verificacoes += 1
-            if valores == proposicao_atual['resposta_correta']:
-            
+            respostas = proposicao_atual['resposta_correta']
+            if not isinstance(respostas, list):
+                respostas = [respostas]  # Converte para lista, se necessário
+            resposta_correta = valores in respostas
+
+            if resposta_correta:
+
                 fase_atual += 1
                 if fase_atual > len(proposicoes_fases):
-                    resultado = f"Parabéns! Você completou todas as fases com {verificacoes} tentativas."
+                    resultado = f"Parabéns! Você completou todas as fases com {
+                        verificacoes} tentativas."
                     jogador.pontuacao = verificacoes
                     jogador.save()
                     fase_atual = 1
@@ -54,7 +84,8 @@ def game_view(request):
                     valores = valores_iniciais.copy()
                     dicas_vistas = 0
                 else:
-                    resultado = f"Fase {fase_atual - 1} concluída! Avançando para a fase {fase_atual}."
+                    resultado = f"Fase {
+                        fase_atual - 1} concluída! Avançando para a fase {fase_atual}."
                     valores = valores_iniciais.copy()
                     dicas_vistas = 0
                 proposicao_atual = proposicoes_fases[fase_atual - 1]
@@ -76,8 +107,8 @@ def game_view(request):
     })
 
 
-
 valores_iniciais = {'p': 'F', 'q': 'F', 'r': 'F'}
+
 
 def inicio_jogo_view(request):
     if request.method == 'POST':
@@ -96,8 +127,9 @@ def inicio_jogo_view(request):
 
     jogadores = Jogador.objects.order_by('-pontuacao')[:5]
     return render(request, 'home.html', {'jogadores': jogadores, 'form': form})
- 
+
 
 def leaderboard_view(request):
-    jogadores = Jogador.objects.order_by('-pontuacao')[:10]  # Exibe os top 10 jogadores
+    jogadores = Jogador.objects.order_by(
+        '-pontuacao')[:10]  # Exibe os top 10 jogadores
     return render(request, 'leaderboard.html', {'jogadores': jogadores})
