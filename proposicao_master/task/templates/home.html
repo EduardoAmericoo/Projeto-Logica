@@ -1,70 +1,58 @@
 {% extends 'menu.html' %}
 {% load static %}
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Proposição Master</title>
-    <!-- Bootstrap CSS CDN -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7x4eT5F63VcgxAKMowI7f4UtbFsd5lqEe2"
-      crossorigin="anonymous"
-    />
+<div class="game-container">
+  <div class="content-container">
+    <h2>Bem-vindo ao Proposição Master!</h2>
+    <p>Digite seu nome para começar o jogo:</p>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'styles.css' %}" />
-  </head>
-  <body>
-    <div class="game-container">
-      <div class="content-container">
-        <h2>Bem-vindo ao Proposição Master!</h2>
-        <p>Digite seu nome para começar o jogo:</p>
+    <!-- Formulário para iniciar o jogo -->
+    <form method="post" action="{% url 'home' %}" class="start-game-form">
+      {% csrf_token %}
+      <input type="text" name="nome" placeholder="Seu nome" required class="input-name" />
+      <button type="submit" class="btn-start-game">Começar o Jogo</button>
+    </form>
+  </div>
 
-        <!-- Ajuste para redirecionar para a página do jogo -->
-        <form method="post" action="{% url 'home' %}" class="start-game-form">
-          {% csrf_token %}
-          <input
-            type="text"
-            name="nome"
-            placeholder="Seu nome"
-            required
-            class="input-name"
-          />
-          <button type="submit" class="btn-start-game">Começar o Jogo</button>
-        </form>
-      </div>
+  <!-- Leaderboard -->
+  <div id="leaderboard" class="leaderboard-container d-none">
+    <h5 class="text-center leaderboard-title">🏆 Leaderboard</h5>
+    <ul class="list-group list-group-flush leaderboard-list">
+      {% for jogador in jogadores %}
+      <li class="list-group-item leaderboard-item 
+          {% if forloop.first %}top-player{% elif forloop.counter == 2 %}second-player{% elif forloop.counter == 3 %}third-player{% endif %}">
+        <span class="player-name">{{ jogador.nome }}</span>
+        <span class="player-score">{{ jogador.pontuacao }} pts</span>
+      </li>
+      {% empty %}
+      <li class="list-group-item leaderboard-item">Nenhum jogador registrado ainda.</li>
+      {% endfor %}
+    </ul>
+  </div>
 
-      <div class="leaderboard-container">
-        <h5 class="text-center">Leaderboard</h5>
-        <ul class="list-group list-group-flush">
-          {% for jogador in jogadores %}
-          <li class="list-group-item">
-            {{ jogador.nome }} - {{ jogador.pontuacao }} pts
-          </li>
-          {% empty %}
-          <li class="list-group-item">Nenhum jogador registrado ainda.</li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div class="help-button">
-        <button id="help" class="btn btn-secondary">?</button>
-        <div id="help-text" class="help-text d-none">
-          <p>Aqui estão as regras do jogo...</p>
-        </div>
-      </div>
+  <!-- Botão de ajuda -->
+  <div class="help-button">
+    <button id="help" class="btn btn-secondary">?</button>
+    <div id="help-text" class="help-text d-none">
+      <p>Aqui estão as regras do jogo...</p>
     </div>
-    <script>
-      document.getElementById("help").addEventListener("click", function () {
-        const helpText = document.getElementById("help-text");
-        helpText.classList.toggle("d-none");
-      });
-    </script>
-  </body>
-</html>
+  </div>
+</div>
+
+<script>
+  // Função para alternar a exibição do leaderboard
+  function toggleLeaderboard() {
+    const leaderboard = document.getElementById("leaderboard");
+    leaderboard.classList.toggle("d-none");
+  }
+
+  // Função para alternar a exibição do texto de ajuda
+  document.getElementById("help").addEventListener("click", function () {
+    const helpText = document.getElementById("help-text");
+    helpText.classList.toggle("d-none");
+  });
+</script>
+
 <style>
   .game-container {
     position: relative;
@@ -78,10 +66,12 @@
     color: #343a40;
   }
 
+
   .content-container {
     text-align: center;
     margin-bottom: 20px;
   }
+
 
   .start-game-form {
     display: flex;
@@ -89,6 +79,7 @@
     align-items: center;
     gap: 10px;
   }
+
 
   .input-name {
     width: 100%;
@@ -100,11 +91,13 @@
     transition: border-color 0.3s;
   }
 
+
   .input-name:focus {
     border-color: #4a90e2;
     outline: none;
     box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
   }
+
 
   .btn-start-game {
     background: linear-gradient(135deg, #4a90e2, #007bff);
@@ -119,16 +112,18 @@
     cursor: pointer;
   }
 
+
   .btn-start-game:hover {
     background: linear-gradient(135deg, #007bff, #0056b3);
     transform: scale(1.05);
   }
 
+
   .btn-start-game:active {
     transform: scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
-
+  /* Estilo do Leaderboard */
   .leaderboard-container {
     position: absolute;
     top: 20px;
@@ -140,7 +135,79 @@
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+  .leaderboard-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
+    border: 2px solid #ced4da;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
 
+
+  .leaderboard-title {
+    font-size: 24px;
+    color: #000000;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+
+
+  .leaderboard-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+
+  .leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e6e6e6;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+
+  .leaderboard-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+
+  .top-player {
+    background-color: #ffd700; /* Ouro para o primeiro lugar */
+    font-weight: bold;
+    color: #343a40;
+  }
+  .second-player {
+   background-color: #c0c0c0; /* Prata */
+   font-weight: bold;
+   color: #343a40;
+  }
+  .third-player {
+   background-color: #cd7f32; /* Bronze */
+   font-weight: bold;
+   color: #343a40;
+  }
+
+
+  .player-name {
+    font-size: 18px;
+  }
+
+
+  .player-score {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+  }
   .help-button {
     position: absolute;
     bottom: 20px;
@@ -148,6 +215,7 @@
     display: flex;
     flex-direction: column-reverse;
   }
+
 
   .help-button .btn {
     border-radius: 50%;
@@ -157,6 +225,7 @@
     text-align: center;
     padding: 0;
   }
+
 
   .help-text {
     margin-bottom: 15px;
@@ -169,8 +238,10 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
+
   .d-none {
     display: none;
   }
 </style>
+
 {% endblock %}
