@@ -1,0 +1,240 @@
+{% extends 'menu.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposição Master - Jogo</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Estilização do corpo da página */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    /* Contêiner do jogo */
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Proposição */
+    .proposicao {
+      font-size: 28px;
+      font-weight: bold;
+      color: #4a4a4a;
+      margin-bottom: 20px;
+      background-color: #e0e0e0;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex; 
+      gap: 2px;
+      align-items: baseline;
+    }
+
+    .proposicao .prop {
+      letter-spacing: -1px; 
+      margin: 0 1px; 
+      vertical-align: middle;
+    }
+
+    /* Destaque para proposições P, Q e R */
+    .prop {
+      display: inline-block;
+      width: 25px;
+      height: 35px;
+      background-color: #757575;
+      color: #ffffff;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 8px;
+      margin: 0 5px;
+    }
+
+    .proposicao span {
+      padding: 5px 2px;
+      border-radius: 5px;
+    }
+
+    /* Contêiner de opções Verdadeiro/Falso */
+    .opcoes-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* Botões de alternância V/F */
+    .botao-alternar {
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+      width: 60px;
+    }
+
+    /* Cores específicas para os botões V e F */
+    .botao-verde {
+      background-color: #4caf50; /* Verde para V */
+    }
+
+    .botao-verde:hover {
+      background-color: #388e3c;
+    }
+
+    .botao-azul {
+      background-color: #2196f3; /* Azul para F */
+    }
+
+    .botao-azul:hover {
+      background-color: #1976d2;
+    }
+
+    /* Botão de verificar */
+    .btn-verificar {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #052c55;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-verificar:hover {
+      background-color: #0f447c;
+      transform: scale(1.05);
+    }
+
+    .btn-verificar:active {
+      transform: scale(0.98);
+    }
+
+    /* Botão e contêiner de dicas */
+    .dica-container {
+      margin-top: 20px;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      padding: 15px;
+      border-radius: 8px;
+      color: #856404;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    .btn-dica {
+      margin-top: 15px;
+      padding: 8px 15px;
+      font-size: 16px;
+      background-color: #ffc107;
+      color: #333;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-dica:hover {
+      background-color: #e0a800;
+    }
+
+    /* Rodapé */
+    footer {
+      width: 100%;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+    
+  </style>
+</head>
+
+<body>
+
+<div class="content">
+  <!-- Exibir a fase atual -->
+  <div class="fase-info">
+    <h3>Fase {{ fase_atual }} de 5</h3>
+  </div>
+
+  <!-- Proposição lógica -->
+  <div class="proposicao">
+    {% for char in proposicao %}
+      {% if char == "p" or char == "r" or char == "q" %}
+        <span class="prop">{{ char }}</span>
+      {% else %}
+        <span>{{ char }}</span>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- Contêiner de opções Verdadeiro/Falso -->
+  <form method="POST" action="{% url 'game' %}">
+    {% csrf_token %}
+    <div class="opcoes-container">
+      <button type="submit" name="toggle" value="p" class="botao-alternar {% if valores.p == 'V' %}botao-verde{% else %}botao-azul{% endif %}">{{ valores.p }}</button>
+      <button type="submit" name="toggle" value="q" class="botao-alternar {% if valores.q == 'V' %}botao-verde{% else %}botao-azul{% endif %}">{{ valores.q }}</button>
+      <button type="submit" name="toggle" value="r" class="botao-alternar {% if valores.r == 'V' %}botao-verde{% else %}botao-azul{% endif %}">{{ valores.r }}</button>
+    </div>
+    <button type="submit" class="btn-verificar" name="verificar" value="verificar">Verificar</button>
+  </form>
+
+  <!-- Botão e exibição de dicas -->
+  {% if mostrar_dica %}
+    <form method="POST" action="{% url 'game' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn-dica" name="mostrar_dica">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightbulb-fill" viewBox="0 0 16 16">
+          <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m3 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1-.5-.5"/>
+        </svg>
+      </button>
+    </form>
+  {% endif %}
+
+  {% if dica_atual %}
+    <div class="dica-container">
+      <p>{{ dica_atual }}</p>
+    </div>
+  {% endif %}
+
+  {% if resultado %}
+    <div class="resultado">{{ resultado }}</div>
+  {% endif %}
+</div>
+
+</body>
+</html>
+{% endblock %}
+
