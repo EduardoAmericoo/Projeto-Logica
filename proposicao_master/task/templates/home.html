@@ -1,5 +1,4 @@
 {% extends 'menu.html' %}
-{% load static %}
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -8,15 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Proposição Master</title>
     <!-- Bootstrap CSS CDN -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7x4eT5F63VcgxAKMowI7f4UtbFsd5lqEe2"
-      crossorigin="anonymous"
-    />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </head>
   <body>
     <div class="game-container">
@@ -24,43 +16,83 @@
         <h2>Bem-vindo ao Proposição Master!</h2>
 
         <p>Digite seu nome para começar o jogo:</p>
-
         <!-- Ajuste para redirecionar para a página do jogo -->
-        <form method="get" action="{% url 'game' %}" class="start-game-form">
+        <form method="post" action="{% url 'home' %}" class="start-game-form">
           {% csrf_token %}
-          <input
-            type="text"
-            name="nome"
-            placeholder="Seu nome"
-            required
-            class="input-name"
-          />
+          {{ form.nome }}
           <button type="submit" class="btn-start-game">Começar o Jogo</button>
         </form>
+        
       </div>
 
-      <div class="leaderboard-container">
-        <h5 class="text-center">Leaderboard</h5>
-        <ul class="list-group list-group-flush">
-          {% for jogador in jogadores %}
-          <li class="list-group-item">
-            {{ jogador.nome }} - {{ jogador.pontuacao }} pts
-          </li>
-          {% empty %}
-          <li class="list-group-item">Nenhum jogador registrado ainda.</li>
-          {% endfor %}
+      <div id="leaderboard" class="leaderboard-container">
+        <h5 class="text-center leaderboard-title">🏆 Leaderboard</h5>
+        <ul class="list-group list-group-flush leaderboard-list">
+          {% if jogadores %}
+            {% for jogador in jogadores %}
+            <li
+              class="list-group-item leaderboard-item {% if forloop.first %}top-player{% elif forloop.counter == 2 %}second-player{% elif forloop.counter == 3 %}third-player{% endif %}">
+              <span class="player-name">{{ jogador.nome }}</span>
+              <span class="player-score">{{ jogador.pontuacao }} pts</span>
+            </li>
+            {% endfor %}
+          {% else %}
+          <li class="list-group-item leaderboard-item">Nenhum jogador registrado ainda.</li>
+          {% endif %}
         </ul>
-      </div>
+          </div>
+      
     </div>
-    <script>
-      document.getElementById("help").addEventListener("click", function () {
-        const helpText = document.getElementById("help-text");
-        helpText.classList.toggle("d-none");
-      });
-    </script>
   </body>
 </html>
 <style>
+  body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.navbar {
+  width: 100%;
+  background-color: #4a4a4a;
+  padding: 10px 20px; /* Mesma altura e padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 60px; /* Altura mínima uniforme */
+}
+
+.navbar h1 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  color: #f0f0f0;
+  margin: 0;
+}
+
+.navbar-menu ul {
+  display: flex;
+  gap: 25px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar-menu li {
+  margin: 0;
+}
+
+.navbar-menu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+
   
   .game-container {
     position: relative;
@@ -171,5 +203,62 @@
   .d-none {
     display: none;
   }
+  /*Leaderboard*/
+  .leaderboard-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 2000px;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .leaderboard-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 300px;
+        background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
+        border: 2px solid #ced4da;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+
+      .leaderboard-title {
+        font-size: 24px;
+        color: #000000;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+
+
+      .leaderboard-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+
+      .leaderboard-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background-color: #ffffff;
+        border-bottom: 1px solid #e6e6e6;
+        border-radius: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+
+      .leaderboard-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
 </style>
 {% endblock %}

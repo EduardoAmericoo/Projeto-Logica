@@ -1,23 +1,19 @@
-{% extends 'home.html' %} {% block content %}
-<div class="container">
-  <h2 class="mt-4">Leaderboard</h2>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Posição</th>
-        <th scope="col">Nome do Jogador</th>
-        <th scope="col">Pontuação</th>
-      </tr>
-    </thead>
-    <tbody>
+{% extends 'menu.html' %} {% block content %}
+<div id="leaderboard" class="leaderboard-container">
+  <h5 class="text-center leaderboard-title">🏆 Leaderboard</h5>
+  <ul class="list-group list-group-flush leaderboard-list">
+    {% if jogadores %}
       {% for jogador in jogadores %}
-      <tr>
-        <th scope="row">{{ forloop.counter }}</th>
-        <td>{{ jogador.nome }}</td>
-        <td>{{ jogador.pontuacao }}</td>
-      </tr>
+      <li
+        class="list-group-item leaderboard-item {% if forloop.first %}top-player{% elif forloop.counter == 2 %}second-player{% elif forloop.counter == 3 %}third-player{% endif %}">
+        <span class="player-name">{{ jogador.nome }}</span>
+        <span class="player-score">{{ jogador.pontuacao }} pts</span>
+      </li>
       {% endfor %}
-    </tbody>
-  </table>
-</div>
+    {% else %}
+    <li class="list-group-item leaderboard-item">Nenhum jogador registrado ainda.</li>
+    {% endif %}
+  </ul>
+    </div>
+
 {% endblock %}

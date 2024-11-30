@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Jogador, PlayerScore
 from .forms import JogadorForm
+from datetime import datetime
 
 
 # Proposições e respostas corretas para cada fase
@@ -49,12 +50,23 @@ def game_view(request):
     resultado = None
     dica_atual = None
 
+
     if not jogador_id or not Jogador.objects.filter(id=jogador_id).exists():
         return redirect('home')
 
     jogador = Jogador.objects.get(id=jogador_id)
     proposicao_atual = proposicoes_fases[fase_atual - 1]
     dicas_vistas = request.session.get('dicas_vistas', 0)
+    inicio_jogo_str = request.session.get('inicio_jogo')
+    if inicio_jogo_str:
+        inicio_jogo = datetime.strptime(inicio_jogo_str, '%Y-%m-%d %H:%M:%S')
+        tempo_gasto = datetime.now() - inicio_jogo
+        minutos, segundos = divmod(tempo_gasto.total_seconds(), 60)
+        tempo_formatado = f'{int(minutos)}min {int(segundos)}s'
+    else:
+        tempo_formatado = 'N/A'
+
+    pontuacao_atual = max(1000 - (verificacoes * 10), 0)
 
     if request.method == 'POST':
         if 'mostrar_dica' in request.POST:
@@ -75,14 +87,21 @@ def game_view(request):
 
                 fase_atual += 1
                 if fase_atual > len(proposicoes_fases):
-                    resultado = f"Parabéns! Você completou todas as fases com {
-                        verificacoes} tentativas."
-                    jogador.pontuacao = verificacoes
+                    pontuacao_base = 1000  # Pontuação inicial
+                    desconto_por_tentativa = 10  # Penalidade por tentativa
+                    pontuacao_final = max(pontuacao_base - (verificacoes * desconto_por_tentativa), 0)  # Garante que a pontuação nunca seja negativa
+                    jogador.pontuacao = pontuacao_final
+
                     jogador.save()
-                    fase_atual = 1
-                    verificacoes = 0
-                    valores = valores_iniciais.copy()
-                    dicas_vistas = 0
+                    
+                    # Limpar variáveis de sessão e redirecionar para a página de fim de jogo
+                    request.session['fase_atual'] = 1
+                    request.session['valores'] = valores_iniciais.copy()
+                    request.session['tentativas_finais'] = verificacoes
+                    request.session['verificacoes'] = 0
+                    request.session['dicas_vistas'] = 0
+                    
+                    return redirect('endgame')  # Certifique-se de que 'endgame' é a URL correta
                 else:
                     resultado = f"Fase {
                         fase_atual - 1} concluída! Avançando para a fase {fase_atual}."
@@ -103,7 +122,9 @@ def game_view(request):
         'dica_atual': dica_atual,
         'mostrar_dica': dicas_vistas < len(proposicao_atual["dicas"]),
         'fase_atual': fase_atual,
-        'proposicao': proposicao_atual['proposicao']
+        'proposicao': proposicao_atual['proposicao'],
+        'pontuacao_atual': pontuacao_atual,
+        'tempo_gasto': tempo_formatado,
     })
 
 
@@ -120,6 +141,7 @@ def inicio_jogo_view(request):
             request.session['valores'] = valores_iniciais.copy()
             request.session['jogador_id'] = jogador.id
             request.session['verificacoes'] = 0
+            request.session['inicio_jogo'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             # Redireciona para a página de jogo
             return redirect('game')
     else:
@@ -133,3 +155,23 @@ def leaderboard_view(request):
     jogadores = Jogador.objects.order_by(
         '-pontuacao')[:10]  # Exibe os top 10 jogadores
     return render(request, 'leaderboard.html', {'jogadores': jogadores})
+
+def endgame_view(request):
+    jogador_id = request.session.get('jogador_id')
+    if jogador_id:
+        jogador=Jogador.objects.get(id=jogador_id)
+        pontuacao = jogador.pontuacao
+        tentativas = request.session.get('tentativas_finais', 'N/A')
+        inicio_jogo_str = request.session.get('inicio_jogo')
+        if inicio_jogo_str:
+            inicio_jogo = datetime.strptime(inicio_jogo_str, '%Y-%m-%d %H:%M:%S')
+            tempo_gasto = datetime.now() - inicio_jogo  # Calcula a diferença
+            minutos, segundos = divmod(tempo_gasto.total_seconds(), 60)
+            tempo_formatado = f'{int(minutos)}min {int(segundos)}s'
+        else:
+            tempo_formatado = 'N/A'
+
+        return render(request, 'endgame.html', {'jogador_nome': jogador.nome, 'pontuacao': pontuacao, 'tentativas': tentativas, 'tempo_gasto': tempo_formatado})
+    else:
+        return render(request, 'endgame.html', {'jogador_nome': 'Desconhecido', 'pontuacao': 0, 'tentativas': 'N/A', 'tempo_gasto': 'N/A'})
+    

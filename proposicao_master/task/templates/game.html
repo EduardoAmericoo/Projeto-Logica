@@ -163,24 +163,55 @@
       background-color: #e0a800;
     }
 
-    /* Rodapé */
-    footer {
-      width: 100%;
-      background-color: #333;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      font-size: 14px;
-    }
-    
+    .game-header {
+    margin-bottom: 20px; /* Espaço entre o cabeçalho e o restante */
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between; /* Coloca os elementos nas extremidades */
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 18px;
+    margin-bottom: 30px; /* Espaço extra abaixo do cabeçalho */
+}
+
+.game-stats p {
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.divider {
+    border: none;
+    border-top: 2px solid #ccc; /* Linha divisória mais visível */
+    margin: 20px 0; /* Espaçamento acima e abaixo da linha */
+}
+
+.game-content {
+    margin-top: 20px; /* Espaço adicional entre o divisor e o conteúdo */
+}
+
+.game-proposicao {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+
   </style>
+
+  
 
 <div class="content">
   <!-- Exibir a fase atual -->
   <div class="fase-info">
     <h3>Fase {{ fase_atual }} de 5</h3>
   </div>
-
+  
   <!-- Proposição lógica -->
   <div class="proposicao">
     {% for char in proposicao %}
@@ -225,8 +256,11 @@
     <div class="resultado">{{ resultado }}</div>
   {% endif %}
 </div>
-
-</body>
-</html>
+<div class="game-header">
+  <div class="game-stats">
+    <p><strong>Pontuação Atual:</strong> {{ pontuacao_atual }}</p>
+    <p><strong>Tempo Gasto:</strong> {{ tempo_gasto }}</p>
+</div>
+</div>
 {% endblock %}
 
